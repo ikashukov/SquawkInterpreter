@@ -33,13 +33,13 @@ object Parser {
         val (expr, afterExpr) = parseExpression(rest)
         afterExpr match {
           case Semicolon :: remainingTokens =>
-            (LetStatement(IdentifierExpr(name), expr), remainingTokens)
+            (LetStmt(IdentifierExpr(name), expr), remainingTokens)
           case _ => throw new RuntimeException("Expected ';' after let statement")
         }
       case _ =>
         val (expr, remainingTokens) = parseExpression(tokens)
         remainingTokens match {
-          case Semicolon :: rest => (ExpressionStatement(expr), rest)
+          case Semicolon :: rest => (ExpressionStmt(expr), rest)
           case _ => throw new RuntimeException("Expected ';' after expression")
         }
     }

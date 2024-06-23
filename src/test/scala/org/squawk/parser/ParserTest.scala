@@ -1,7 +1,7 @@
 package org.squawk.parser
 
 import munit.FunSuite
-import org.squawk.ast.{IdentifierExpr, LetStatement, NumberLiteralExpr, Program}
+import org.squawk.ast.{IdentifierExpr, LetStmt, NumberLiteralExpr, Program}
 import org.squawk.tokens.*
 
 class ParserTest extends FunSuite {
@@ -12,7 +12,7 @@ class ParserTest extends FunSuite {
     val tokens = List(Let, Identifier("a"), Assign, Number(10), Semicolon)
 
     val parsedProgram = Parser.parse(tokens)
-    val expectedProgram = Program(List(LetStatement(IdentifierExpr("a"), NumberLiteralExpr(10))))
+    val expectedProgram = Program(List(LetStmt(IdentifierExpr("a"), NumberLiteralExpr(10))))
 
     assertEquals(parsedProgram, expectedProgram)
   }

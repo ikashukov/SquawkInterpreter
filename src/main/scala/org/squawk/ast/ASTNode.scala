@@ -21,19 +21,18 @@ case class FunctionCallExpr(function: Expression, arguments: List[Expression]) e
 // Statements
 sealed trait Statement extends ASTNode
 
-case class LetStatement(identifier: IdentifierExpr, value: Expression) extends Statement
-case class ReturnStatement(value: Expression) extends Statement
-case class ExpressionStatement(expression: Expression) extends Statement
-case class BlockStatement(statements: List[Statement]) extends Statement
-
-case class IfStatement(
+case class LetStmt(identifier: IdentifierExpr, value: Expression) extends Statement
+case class ReturnStmt(value: Expression) extends Statement
+case class ExpressionStmt(expression: Expression) extends Statement
+case class BlockStmt(statements: List[Statement]) extends Statement
+case class IfStmt(
                         condition: Expression,
-                        consequence: BlockStatement,
-                        alternative: Option[BlockStatement]
+                        consequence: BlockStmt,
+                        alternative: Option[BlockStmt]
                       ) extends Statement
 
-case class FunctionDeclaration(
+case class FunctionDeclarationStmt(
                                 name: IdentifierExpr,
                                 parameters: List[IdentifierExpr],
-                                body: BlockStatement
+                                body: BlockStmt
                               ) extends Statement
