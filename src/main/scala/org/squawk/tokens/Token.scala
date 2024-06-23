@@ -12,6 +12,8 @@ case object GreaterThan extends Token     // >
 
 case object Plus extends Token            // +
 case object Minus extends Token           // -
+case object Equal extends Token           // ==
+case object NotEqual extends Token        // !=
 case object Assign extends Token          // =
 case object Semicolon extends Token       // ;
 case object Comma extends Token           // ,

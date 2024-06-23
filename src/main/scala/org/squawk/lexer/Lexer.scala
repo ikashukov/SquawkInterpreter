@@ -5,7 +5,7 @@ import tokens.*
 
 object Lexer {
 
-  private val tokenPattern = raw"([-+(){}<>=;,!*/]|[A-Za-z][A-Za-z0-9_]*|\d+)".r
+  private val tokenPattern = raw"(==|!=|[-+(){}<>=;,!*/]|[A-Za-z][A-Za-z0-9_]*|\d+)".r
   private val integerPattern = "\\d+"
   private val identifierPattern = "[A-Za-z][A-Za-z0-9_]*"
 
@@ -19,6 +19,8 @@ object Lexer {
       case ">" => GreaterThan
       case "+" => Plus
       case "-" => Minus
+      case "==" => Equal
+      case "!=" => NotEqual
       case "=" => Assign
       case ";" => Semicolon
       case "," => Comma

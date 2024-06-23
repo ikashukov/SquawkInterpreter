@@ -27,6 +27,8 @@ class LexerTest extends FunSuite {
       } else {
       return false;
       }
+      5 == 5;
+      2 != 13;
       """
     val obtainedTokens = Lexer.tokenize(code)
     val expectedTokens = List(
@@ -42,7 +44,9 @@ class LexerTest extends FunSuite {
       Return, True, Semicolon,
       CloseBracket, Else, OpenBracket,
       Return, False, Semicolon,
-      CloseBracket
+      CloseBracket,
+      Number(5), Equal, Number(5), Semicolon,
+      Number(2), NotEqual, Number(13), Semicolon,
     )
     assertEquals(obtainedTokens, expectedTokens)
   }
