@@ -32,7 +32,7 @@ object Parser {
 
   private def parseStatement(tokens: List[Token]): Either[String, (Statement, List[Token])] = {
     tokens match {
-      
+
       case Let :: Identifier(name) :: Assign :: rest =>
         parseExpression(rest).flatMap { case (expr, afterExpr) =>
           afterExpr match {
@@ -41,7 +41,16 @@ object Parser {
             case _ => Left("Expected ';' after let statement")
           }
         }
-        
+
+      case Return :: rest =>
+        parseExpression(rest).flatMap { case (expr, afterExpr) =>
+          afterExpr match {
+            case Semicolon :: remainingTokens =>
+              Right(ReturnStmt(expr), remainingTokens)
+            case _ => Left("Expected ';' after return statement")
+          }
+        }
+
       case _ =>
         parseExpression(tokens).flatMap { case (expr, remainingTokens) =>
           remainingTokens match {
