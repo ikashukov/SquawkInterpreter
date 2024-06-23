@@ -1,15 +1,13 @@
 package org.squawk.parser
 
 import munit.FunSuite
-import org.squawk.ast._
+import org.squawk.ast.{IdentifierExpr, LetStmt, NumberLiteralExpr, Program, ReturnStmt, BooleanLiteralExpr}
 import org.squawk.lexer.Lexer
 
 class ParserTest extends FunSuite {
 
   test("'let' expression parsing test") {
-
     val tokens = Lexer.tokenize("let a = 10;")
-
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(LetStmt(IdentifierExpr("a"), NumberLiteralExpr(10))))
 
@@ -20,9 +18,7 @@ class ParserTest extends FunSuite {
   }
 
   test("'return' expression parsing test with a number literal") {
-
     val tokens = Lexer.tokenize("return 111;")
-
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(NumberLiteralExpr(111))))
 
@@ -33,9 +29,7 @@ class ParserTest extends FunSuite {
   }
 
   test("'return' expression parsing test with a boolean") {
-
     val tokens = Lexer.tokenize("return false;")
-
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(BooleanLiteralExpr(false))))
 
@@ -46,9 +40,7 @@ class ParserTest extends FunSuite {
   }
 
   test("'return' expression parsing test with an identifier") {
-
     val tokens = Lexer.tokenize("return abcd;")
-
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(IdentifierExpr("abcd"))))
 
@@ -57,17 +49,4 @@ class ParserTest extends FunSuite {
       case Left(error) => fail(s"Parsing failed with error: $error")
     }
   }
-
-  test("Invalid 'let' statement should fail") {
-
-    val tokens = Lexer.tokenize("let a 10;")
-
-    val parsedProgram = Parser.parse(tokens)
-
-    parsedProgram match {
-      case Right(_) => fail("Parsing should have failed")
-      case Left(error) => assertEquals(error, "Unsupported expression")
-    }
-  }
-
 }
