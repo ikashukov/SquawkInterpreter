@@ -25,7 +25,7 @@ project/local-plugins.sbt
 classes/
 
 # idea
-.idea
+.idea/**
 .idea_modules
 /.worksheet/
 
