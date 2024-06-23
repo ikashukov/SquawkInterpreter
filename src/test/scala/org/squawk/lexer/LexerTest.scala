@@ -20,6 +20,13 @@ class LexerTest extends FunSuite {
       x + y;
       };
       let result = add(five, ten);
+      !-/*6;
+      6 < 12 > 3;
+      if (7 < 13) {
+      return true;
+      } else {
+      return false;
+      }
       """
     val obtainedTokens = Lexer.tokenize(code)
     val expectedTokens = List(
@@ -28,7 +35,14 @@ class LexerTest extends FunSuite {
       Let, Identifier("add"), Assign, Function, OpenParen, Identifier("x"), Comma, Identifier("y"), CloseParen, OpenBracket,
       Identifier("x"), Plus, Identifier("y"), Semicolon,
       CloseBracket, Semicolon,
-      Let, Identifier("result"), Assign, Identifier("add"), OpenParen, Identifier("five"), Comma, Identifier("ten"), CloseParen, Semicolon
+      Let, Identifier("result"), Assign, Identifier("add"), OpenParen, Identifier("five"), Comma, Identifier("ten"), CloseParen, Semicolon,
+      Bang, Minus, Slash, Asterisk, Number(6), Semicolon,
+      Number(6), LessThan, Number(12), GreaterThan, Number(3), Semicolon,
+      If, OpenParen, Number(7), LessThan, Number(13), CloseParen, OpenBracket,
+      Return, True, Semicolon,
+      CloseBracket, Else, OpenBracket,
+      Return, False, Semicolon,
+      CloseBracket
     )
     assertEquals(obtainedTokens, expectedTokens)
   }
