@@ -1,12 +1,12 @@
 package org.squawk.parser
 
 import munit.FunSuite
-import org.squawk.ast.{IdentifierExpr, LetStmt, NumberLiteralExpr, Program, ReturnStmt, BooleanLiteralExpr}
+import org.squawk.ast.{BinaryExpr, BooleanLiteralExpr, ExpressionStmt, IdentifierExpr, LetStmt, NumberLiteralExpr, Program, ReturnStmt}
 import org.squawk.lexer.Lexer
 
 class ParserTest extends FunSuite {
 
-  test("'let' expression parsing test") {
+  test("'let' statement parsing test") {
     val tokens = Lexer.tokenize("let a = 10;")
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(LetStmt(IdentifierExpr("a"), NumberLiteralExpr(10))))
@@ -17,7 +17,7 @@ class ParserTest extends FunSuite {
     }
   }
 
-  test("'return' expression parsing test with a number literal") {
+  test("'return' statement parsing test with a number literal") {
     val tokens = Lexer.tokenize("return 111;")
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(NumberLiteralExpr(111))))
@@ -28,7 +28,7 @@ class ParserTest extends FunSuite {
     }
   }
 
-  test("'return' expression parsing test with a boolean") {
+  test("'return' statement parsing test with a boolean") {
     val tokens = Lexer.tokenize("return false;")
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(BooleanLiteralExpr(false))))
@@ -39,7 +39,7 @@ class ParserTest extends FunSuite {
     }
   }
 
-  test("'return' expression parsing test with an identifier") {
+  test("'return' statement parsing test with an identifier") {
     val tokens = Lexer.tokenize("return abcd;")
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(ReturnStmt(IdentifierExpr("abcd"))))
@@ -49,4 +49,31 @@ class ParserTest extends FunSuite {
       case Left(error) => fail(s"Parsing failed with error: $error")
     }
   }
+
+  test("basic addition expression parsing test") {
+    val tokens = Lexer.tokenize("2 + 2;")
+    val parsedProgram = Parser.parse(tokens)
+    val expectedProgram = Program(List(ExpressionStmt(BinaryExpr("Plus", NumberLiteralExpr(2), NumberLiteralExpr(2)))))
+
+    parsedProgram match {
+      case Right(program) => assertEquals(program, expectedProgram)
+      case Left(error) => fail(s"Parsing failed with error: $error")
+    }
+  }
+
+  test("arithmetic priority expression parsing test") {
+    val tokens = Lexer.tokenize("2 + 3 * 4;")
+    val parsedProgram = Parser.parse(tokens)
+    val expectedProgram = Program(List(ExpressionStmt(BinaryExpr(
+      "Plus",
+      NumberLiteralExpr(2),
+      BinaryExpr("Asterisk", NumberLiteralExpr(3), NumberLiteralExpr(4))
+    ))))
+
+    parsedProgram match {
+      case Right(program) => assertEquals(program, expectedProgram)
+      case Left(error) => fail(s"Parsing failed with error: $error")
+    }
+  }
+
 }
