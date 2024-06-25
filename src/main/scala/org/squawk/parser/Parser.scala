@@ -40,7 +40,7 @@ object Parser {
           afterExpr match {
             case Semicolon :: remainingTokens =>
               Right((LetStmt(IdentifierExpr(name), expr), remainingTokens))
-            case _ => Left("Expected ';' after let statement")
+            case _ => Left(s"Expected ';' after let statement near: ${showNearbyTokens(afterExpr)}")
           }
         }
 
@@ -49,7 +49,7 @@ object Parser {
           afterExpr match {
             case Semicolon :: remainingTokens =>
               Right(ReturnStmt(expr), remainingTokens)
-            case _ => Left("Expected ';' after return statement")
+            case _ => Left(s"Expected ';' after return statement near: ${showNearbyTokens(afterExpr)}")
           }
         }
 
@@ -60,7 +60,7 @@ object Parser {
         parseExpression(tokens).flatMap { case (expr, remainingTokens) =>
           remainingTokens match {
             case Semicolon :: rest => Right((ExpressionStmt(expr), rest))
-            case _ => Left("Expected ';' after expression")
+            case _ => Left(s"Expected ';' after expression near: ${showNearbyTokens(remainingTokens)}")
           }
         }
     }
@@ -88,10 +88,10 @@ object Parser {
           afterExpr match {
             case CloseParen :: remainingTokens =>
               Right((expr, remainingTokens))
-            case _ => Left("Expected ')' after expression")
+            case _ => Left(s"Expected ')' after expression near: ${showNearbyTokens(afterExpr)}")
           }
         }
-      case _ => Left("Unsupported expression")
+      case _ => Left(s"Unsupported expression near: ${showNearbyTokens(tokens)}")
     }
   }
 
@@ -134,7 +134,7 @@ object Parser {
           Right((params :+ IdentifierExpr(paramName), rest))
         case CloseParen :: rest =>
           Right((params, rest))
-        case _ => Left("Expected parameter list")
+        case _ => Left(s"Expected parameter list near: ${showNearbyTokens(tokens)}")
       }
     }
 
@@ -145,10 +145,10 @@ object Parser {
             afterStatements match {
               case CloseBracket :: afterBlock =>
                 Right((FunctionDeclarationStmt(IdentifierExpr(name), params, BlockStmt(statements)), afterBlock))
-              case _ => Left("Expected '}' after function body")
+              case _ => Left(s"Expected '}' after function body near: ${showNearbyTokens(afterStatements)}")
             }
           }
-        case _ => Left("Expected '{' after function parameters")
+        case _ => Left(s"Expected '{' after function parameters near: ${showNearbyTokens(remainingTokens)}")
       }
     }
   }
@@ -159,5 +159,9 @@ object Parser {
     case Plus | Minus => SUM
     case Asterisk | Slash => PRODUCT
     case _ => LOWEST
+  }
+
+  private def showNearbyTokens(tokens: List[Token], count: Int = 5): String = {
+    tokens.take(count).mkString(" ")
   }
 }
