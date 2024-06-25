@@ -1,9 +1,11 @@
 package org.squawk
 package parser
 
-import tokens._
-import ast._
-import Precedence._
+import tokens.*
+import ast.*
+import Precedence.*
+
+import scala.annotation.tailrec
 
 object Parser {
   def parse(tokens: List[Token]): Either[String, Program] = {
@@ -50,6 +52,9 @@ object Parser {
             case _ => Left("Expected ';' after return statement")
           }
         }
+
+      case Function :: Identifier(name) :: OpenParen :: rest =>
+        parseFunctionDeclaration(name, rest)
 
       case _ =>
         parseExpression(tokens).flatMap { case (expr, remainingTokens) =>
@@ -116,6 +121,35 @@ object Parser {
 
     parseExpression(rightTokens, precedence).map { case (right, remainingTokens) =>
       (BinaryExpr(operator, left, right), remainingTokens)
+    }
+  }
+
+  private def parseFunctionDeclaration(name: String, tokens: List[Token]): Either[String, (FunctionDeclarationStmt, List[Token])] = {
+    @tailrec
+    def parseParameters(tokens: List[Token], params: List[IdentifierExpr] = Nil): Either[String, (List[IdentifierExpr], List[Token])] = {
+      tokens match {
+        case Identifier(paramName) :: Comma :: rest =>
+          parseParameters(rest, params :+ IdentifierExpr(paramName))
+        case Identifier(paramName) :: CloseParen :: rest =>
+          Right((params :+ IdentifierExpr(paramName), rest))
+        case CloseParen :: rest =>
+          Right((params, rest))
+        case _ => Left("Expected parameter list")
+      }
+    }
+
+    parseParameters(tokens).flatMap { case (params, remainingTokens) =>
+      remainingTokens match {
+        case OpenBracket :: rest =>
+          parseStatements(rest).flatMap { case (statements, afterStatements) =>
+            afterStatements match {
+              case CloseBracket :: afterBlock =>
+                Right((FunctionDeclarationStmt(IdentifierExpr(name), params, BlockStmt(statements)), afterBlock))
+              case _ => Left("Expected '}' after function body")
+            }
+          }
+        case _ => Left("Expected '{' after function parameters")
+      }
     }
   }
 

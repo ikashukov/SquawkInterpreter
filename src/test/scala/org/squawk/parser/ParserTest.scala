@@ -1,7 +1,7 @@
 package org.squawk.parser
 
 import munit.FunSuite
-import org.squawk.ast.{BinaryExpr, BooleanLiteralExpr, ExpressionStmt, IdentifierExpr, LetStmt, NumberLiteralExpr, Program, ReturnStmt}
+import org.squawk.ast._
 import org.squawk.lexer.Lexer
 import org.squawk.tokens._
 
@@ -57,6 +57,25 @@ class ParserTest extends FunSuite {
     val expectedProgram = Program(List(
       ExpressionStmt(BinaryExpr(Asterisk,
         BinaryExpr(Plus, NumberLiteralExpr(1), NumberLiteralExpr(2)), NumberLiteralExpr(3)))
+    ))
+
+    parsedProgram match {
+      case Right(program) => assertEquals(program, expectedProgram)
+      case Left(error) => fail(s"Parsing failed with error: $error")
+    }
+  }
+
+  test("function declaration parsing test") {
+    val tokens = Lexer.tokenize("fn add(a, b) { return a + b; }")
+    val parsedProgram = Parser.parse(tokens)
+    val expectedProgram = Program(List(
+      FunctionDeclarationStmt(
+        IdentifierExpr("add"),
+        List(IdentifierExpr("a"), IdentifierExpr("b")),
+        BlockStmt(List(
+          ReturnStmt(BinaryExpr(Plus, IdentifierExpr("a"), IdentifierExpr("b")))
+        ))
+      )
     ))
 
     parsedProgram match {
