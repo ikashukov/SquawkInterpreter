@@ -22,13 +22,13 @@ object Parser {
 
     while (remainingTokens.nonEmpty && remainingTokens.head != CloseBracket) {
       parseStatement(remainingTokens) match {
-        case Right(statement, rest) =>
+        case Right((statement, rest)) =>
           statements ::= statement
           remainingTokens = rest
         case Left(error) => return Left(error)
       }
     }
-    Right(statements.reverse, remainingTokens)
+    Right((statements.reverse, remainingTokens))
   }
 
   private def parseStatement(tokens: List[Token]): Either[String, (Statement, List[Token])] = {
@@ -37,7 +37,7 @@ object Parser {
         parseExpression(rest).flatMap { case (expr, afterExpr) =>
           afterExpr match {
             case Semicolon :: remainingTokens =>
-              Right(LetStmt(IdentifierExpr(name), expr), remainingTokens)
+              Right((LetStmt(IdentifierExpr(name), expr), remainingTokens))
             case _ => Left("Expected ';' after let statement")
           }
         }
@@ -54,7 +54,7 @@ object Parser {
       case _ =>
         parseExpression(tokens).flatMap { case (expr, remainingTokens) =>
           remainingTokens match {
-            case Semicolon :: rest => Right(ExpressionStmt(expr), rest)
+            case Semicolon :: rest => Right((ExpressionStmt(expr), rest))
             case _ => Left("Expected ';' after expression")
           }
         }
@@ -84,7 +84,7 @@ object Parser {
               Right((expr, remainingTokens))
             case _ => Left("Expected ')' after expression")
           }
-        }.getOrElse(BooleanLiteralExpr(false), tokens)  // just to make the code compile
+        }.getOrElse((BooleanLiteralExpr(false), tokens))  // just to make the code compile
       case _ => throw new RuntimeException("Unsupported expression")
     }
   }
@@ -100,11 +100,11 @@ object Parser {
           left = newLeft
           currentTokens = newTokens
         case _ =>
-          return Right(left, currentTokens)
+          return Right((left, currentTokens))
       }
     }
 
-    Right(left, currentTokens)
+    Right((left, currentTokens))
   }
 
   private def parseBinaryExpression(left: Expression, tokens: List[Token]): (Expression, List[Token]) = {
@@ -114,7 +114,7 @@ object Parser {
 
     parseExpression(rightTokens, precedence).map { case (right, remainingTokens) =>
       (BinaryExpr(operator.toString, left, right), remainingTokens)
-    }.getOrElse(left, tokens)
+    }.getOrElse((left, tokens))
   }
 
   private def getPrecedence(token: Token): Int = token match {
