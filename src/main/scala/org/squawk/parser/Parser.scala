@@ -3,7 +3,7 @@ package parser
 
 import tokens._
 import ast._
-import ast.Precedence._
+import Precedence._
 
 object Parser {
   def parse(tokens: List[Token]): Either[String, Program] = {
@@ -61,20 +61,31 @@ object Parser {
     }
   }
 
-  private def parseExpression(tokens: List[Token], precedence: Int = Precedence.LOWEST): Either[String, (Expression, List[Token])] = {
+  private def parseExpression(tokens: List[Token], precedence: Int = LOWEST): Either[String, (Expression, List[Token])] = {
     tokens.headOption match {
       case Some(token) =>
-        val (leftExpr, remainingTokens) = token match {
-          case Number(num) => (NumberLiteralExpr(num), tokens.tail)
-          case Identifier(name) => (IdentifierExpr(name), tokens.tail)
-          case True => (BooleanLiteralExpr(true), tokens.tail)
-          case False => (BooleanLiteralExpr(false), tokens.tail)
-          case _ => return Left("Unsupported expression")
-        }
-
+        val (leftExpr, remainingTokens) = parsePrimaryExpression(token, tokens.tail)
         parseInfixExpression(leftExpr, remainingTokens, precedence)
 
       case None => Left("Unexpected end of tokens")
+    }
+  }
+
+  private def parsePrimaryExpression(token: Token, tokens: List[Token]): (Expression, List[Token]) = {
+    token match {
+      case Number(num) => (NumberLiteralExpr(num), tokens)
+      case Identifier(name) => (IdentifierExpr(name), tokens)
+      case True => (BooleanLiteralExpr(true), tokens)
+      case False => (BooleanLiteralExpr(false), tokens)
+      case OpenParen =>
+        parseExpression(tokens).flatMap { case (expr, afterExpr) =>
+          afterExpr match {
+            case CloseParen :: remainingTokens =>
+              Right((expr, remainingTokens))
+            case _ => Left("Expected ')' after expression")
+          }
+        }.getOrElse(BooleanLiteralExpr(false), tokens)  // just to make the code compile
+      case _ => throw new RuntimeException("Unsupported expression")
     }
   }
 
