@@ -3,6 +3,7 @@ package org.squawk.parser
 import munit.FunSuite
 import org.squawk.ast.{BinaryExpr, BooleanLiteralExpr, ExpressionStmt, IdentifierExpr, LetStmt, NumberLiteralExpr, Program, ReturnStmt}
 import org.squawk.lexer.Lexer
+import org.squawk.tokens._
 
 class ParserTest extends FunSuite {
 
@@ -50,12 +51,12 @@ class ParserTest extends FunSuite {
     }
   }
 
-  test("brackets parsing test") {
+  test("grouped expression parsing test") {
     val tokens = Lexer.tokenize("(1 + 2) * 3;")
     val parsedProgram = Parser.parse(tokens)
     val expectedProgram = Program(List(
-      ExpressionStmt(BinaryExpr("Asterisk",
-        BinaryExpr("Plus", NumberLiteralExpr(1), NumberLiteralExpr(2)), NumberLiteralExpr(3)))
+      ExpressionStmt(BinaryExpr(Asterisk,
+        BinaryExpr(Plus, NumberLiteralExpr(1), NumberLiteralExpr(2)), NumberLiteralExpr(3)))
     ))
 
     parsedProgram match {

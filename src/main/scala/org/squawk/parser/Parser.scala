@@ -115,7 +115,7 @@ object Parser {
     val rightTokens = tokens.tail
 
     parseExpression(rightTokens, precedence).map { case (right, remainingTokens) =>
-      (BinaryExpr(operator.toString, left, right), remainingTokens)
+      (BinaryExpr(operator, left, right), remainingTokens)
     }
   }
 
