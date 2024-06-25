@@ -64,19 +64,20 @@ object Parser {
   private def parseExpression(tokens: List[Token], precedence: Int = LOWEST): Either[String, (Expression, List[Token])] = {
     tokens.headOption match {
       case Some(token) =>
-        val (leftExpr, remainingTokens) = parsePrimaryExpression(token, tokens.tail)
-        parseInfixExpression(leftExpr, remainingTokens, precedence)
+        parsePrimaryExpression(token, tokens.tail).flatMap { case (leftExpr, remainingTokens) =>
+          parseInfixExpression(leftExpr, remainingTokens, precedence)
+        }
 
       case None => Left("Unexpected end of tokens")
     }
   }
 
-  private def parsePrimaryExpression(token: Token, tokens: List[Token]): (Expression, List[Token]) = {
+  private def parsePrimaryExpression(token: Token, tokens: List[Token]): Either[String, (Expression, List[Token])] = {
     token match {
-      case Number(num) => (NumberLiteralExpr(num), tokens)
-      case Identifier(name) => (IdentifierExpr(name), tokens)
-      case True => (BooleanLiteralExpr(true), tokens)
-      case False => (BooleanLiteralExpr(false), tokens)
+      case Number(num) => Right((NumberLiteralExpr(num), tokens))
+      case Identifier(name) => Right((IdentifierExpr(name), tokens))
+      case True => Right((BooleanLiteralExpr(true), tokens))
+      case False => Right((BooleanLiteralExpr(false), tokens))
       case OpenParen =>
         parseExpression(tokens).flatMap { case (expr, afterExpr) =>
           afterExpr match {
@@ -84,8 +85,8 @@ object Parser {
               Right((expr, remainingTokens))
             case _ => Left("Expected ')' after expression")
           }
-        }.getOrElse((BooleanLiteralExpr(false), tokens))  // just to make the code compile
-      case _ => throw new RuntimeException("Unsupported expression")
+        }
+      case _ => Left("Unsupported expression")
     }
   }
 
@@ -96,9 +97,10 @@ object Parser {
     while (currentTokens.nonEmpty && precedence < getPrecedence(currentTokens.head)) {
       currentTokens.head match {
         case Plus | Minus | Asterisk | Slash | Equal | NotEqual | LessThan | GreaterThan =>
-          val (newLeft, newTokens) = parseBinaryExpression(left, currentTokens)
-          left = newLeft
-          currentTokens = newTokens
+          parseBinaryExpression(left, currentTokens).map { case (newLeft, newTokens) =>
+            left = newLeft
+            currentTokens = newTokens
+          }
         case _ =>
           return Right((left, currentTokens))
       }
@@ -107,14 +109,14 @@ object Parser {
     Right((left, currentTokens))
   }
 
-  private def parseBinaryExpression(left: Expression, tokens: List[Token]): (Expression, List[Token]) = {
+  private def parseBinaryExpression(left: Expression, tokens: List[Token]): Either[String, (Expression, List[Token])] = {
     val operator = tokens.head
     val precedence = getPrecedence(operator)
     val rightTokens = tokens.tail
 
     parseExpression(rightTokens, precedence).map { case (right, remainingTokens) =>
       (BinaryExpr(operator.toString, left, right), remainingTokens)
-    }.getOrElse((left, tokens))
+    }
   }
 
   private def getPrecedence(token: Token): Int = token match {
