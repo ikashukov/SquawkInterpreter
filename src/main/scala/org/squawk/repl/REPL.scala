@@ -3,24 +3,20 @@ package repl
 
 import lexer.Lexer
 import parser.Parser
+import evaluator.Evaluator
 import scala.io.StdIn.readLine
 
 object REPL {
-
-  private val HELLO = "Welcome to Squawk REPL. Type your code and press Enter to parse. An empty input will exit the REPL."
-  private val PROMPT = "> "
-  private val GOODBYE = "Goodbye!"
-
   def main(args: Array[String]): Unit = {
-    println(HELLO)
+    println("Welcome to Squawk REPL. Type your code and press Enter to parse and evaluate. An empty input will exit the REPL.")
     repl()
   }
 
-  private def repl(): Unit = {
+  def repl(): Unit = {
     var continue = true
 
     while (continue) {
-      print(PROMPT)
+      print("> ")
       val input = readLine()
 
       if (input.trim.isEmpty) {
@@ -30,12 +26,19 @@ object REPL {
         val parseResult = Parser.parse(tokens)
 
         parseResult match {
-          case Right(program) => println(program)
-          case Left(error) => println(s"Error: $error")
+          case Right(program) =>
+            program.statements.foreach { stmt =>
+              val evalResult = Evaluator.evaluate(stmt)
+              evalResult match {
+                case Right(value) => println(s"Result: $value")
+                case Left(error) => println(s"Evaluation error: $error")
+              }
+            }
+          case Left(error) => println(s"Parsing error: $error")
         }
       }
     }
 
-    println(GOODBYE)
+    println("Goodbye!")
   }
 }
