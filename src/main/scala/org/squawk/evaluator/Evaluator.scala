@@ -48,7 +48,7 @@ object Evaluator {
       case (Plus, NumberValue(l), NumberValue(r)) => Right(NumberValue(l + r))
       case (Minus, NumberValue(l), NumberValue(r)) => Right(NumberValue(l - r))
       case (Asterisk, NumberValue(l), NumberValue(r)) => Right(NumberValue(l * r))
-      case (Slash, NumberValue(_), NumberValue(0)) => Left(s"Division by zero")
+      case (Slash, NumberValue(_), NumberValue(0)) => Left("Division by zero")
       case (Slash, NumberValue(l), NumberValue(r)) => Right(NumberValue(l / r))
       case (Equal, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l == r))
       case (NotEqual, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l != r))

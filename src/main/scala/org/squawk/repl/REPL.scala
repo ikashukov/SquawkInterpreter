@@ -8,7 +8,9 @@ import scala.io.StdIn.readLine
 
 object REPL {
   def main(args: Array[String]): Unit = {
-    println("Welcome to Squawk REPL. Type your code and press Enter to parse and evaluate. An empty input will exit the REPL.")
+    println("Welcome to Squawk REPL. Type your code and press Enter to parse and evaluate.")
+    println("Type ':showEnv' to display the current environment.")
+    println("An empty input will exit the REPL.")
     repl()
   }
 
@@ -22,6 +24,11 @@ object REPL {
 
       if (input.trim.isEmpty) {
         continue = false
+      } else if (input.startsWith(":")) {
+        handleCommand(input, environment) match {
+          case Some(updatedEnv) => environment = updatedEnv
+          case None => continue = false
+        }
       } else {
         val tokens = Lexer.tokenize(input)
         val parseResult = Parser.parse(tokens)
@@ -43,5 +50,20 @@ object REPL {
     }
 
     println("Goodbye!")
+  }
+
+  private def handleCommand(command: String, env: Evaluator.Environment): Option[Evaluator.Environment] = {
+    command match {
+      case ":showEnv" =>
+        println("Current environment:")
+        env.foreach { case (name, value) => println(s"$name = $value") }
+        Some(env)
+      case ":exit" =>
+        println("Exiting REPL...")
+        None
+      case _ =>
+        println(s"Unknown command: $command")
+        Some(env)
+    }
   }
 }
