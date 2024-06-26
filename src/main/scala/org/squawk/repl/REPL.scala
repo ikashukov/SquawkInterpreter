@@ -14,6 +14,7 @@ object REPL {
 
   def repl(): Unit = {
     var continue = true
+    var environment: Evaluator.Environment = Map.empty
 
     while (continue) {
       print("> ")
@@ -28,9 +29,11 @@ object REPL {
         parseResult match {
           case Right(program) =>
             program.statements.foreach { stmt =>
-              val evalResult = Evaluator.evaluate(stmt)
+              val evalResult = Evaluator.evaluate(stmt, environment)
               evalResult match {
-                case Right(value) => println(s"Result: $value")
+                case Right((value, updatedEnv)) =>
+                  environment = updatedEnv
+                  println(s"Result: $value")
                 case Left(error) => println(s"Evaluation error: $error")
               }
             }
