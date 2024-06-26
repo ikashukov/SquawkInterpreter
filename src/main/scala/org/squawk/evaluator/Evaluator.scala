@@ -8,6 +8,7 @@ object Evaluator {
   sealed trait Value
   case class NumberValue(value: Int) extends Value
   case class BooleanValue(value: Boolean) extends Value
+  case class FunctionValue(parameters: List[String], body: BlockStmt, env: Environment) extends Value
 
   type Environment = Map[String, Value]
 
@@ -29,6 +30,15 @@ object Evaluator {
           rightValue <- evaluate(right, env).map(_._1)
           result <- evalBinaryExpr(operator, leftValue, rightValue)
         } yield (result, env)
+      case FunctionDeclarationStmt(name, parameters, body) =>
+        val functionValue = FunctionValue(parameters.map(_.name), body, env)
+        Right((NumberValue(0), env + (name.name -> functionValue)))
+      case FunctionCallExpr(function, arguments) =>
+        for {
+          funcValue <- evaluate(function, env).map(_._1)
+          argValues <- evaluateArguments(arguments, env)
+          result <- applyFunction(funcValue, argValues, env)
+        } yield (result, env)
       case _ => Left(s"Unsupported AST node: $node")
     }
   }
@@ -45,6 +55,32 @@ object Evaluator {
       case (LessThan, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l < r))
       case (GreaterThan, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l > r))
       case _ => Left(s"Unsupported binary operation: $operator $left $right")
+    }
+  }
+
+  private def evaluateArguments(arguments: List[Expression], env: Environment): Either[String, List[Value]] = {
+    arguments.foldRight(Right(Nil): Either[String, List[Value]]) { (arg, acc) =>
+      for {
+        argValue <- evaluate(arg, env).map(_._1)
+        accValues <- acc
+      } yield argValue :: accValues
+    }
+  }
+
+  private def applyFunction(funcValue: Value, argValues: List[Value], env: Environment): Either[String, Value] = {
+    funcValue match {
+      case FunctionValue(parameters, body, funcEnv) =>
+        if (parameters.length != argValues.length) {
+          Left(s"Expected ${parameters.length} arguments but got ${argValues.length}")
+        } else {
+          val newEnv = funcEnv ++ parameters.zip(argValues).toMap
+          val result = body.statements.foldLeft[Either[String, Value]](Right(NumberValue(0))) {
+            case (Right(_), stmt) => evaluate(stmt, newEnv).map(_._1)
+            case (left, _) => left
+          }
+          result
+        }
+      case _ => Left(s"Attempted to call a non-function value: $funcValue")
     }
   }
 }

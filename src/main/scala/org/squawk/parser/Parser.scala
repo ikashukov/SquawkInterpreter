@@ -80,7 +80,12 @@ object Parser {
   private def parsePrimaryExpression(token: Token, tokens: List[Token]): Either[String, (Expression, List[Token])] = {
     token match {
       case Number(num) => Right((NumberLiteralExpr(num), tokens))
-      case Identifier(name) => Right((IdentifierExpr(name), tokens))
+      case Identifier(name) =>
+        if (tokens.headOption.contains(OpenParen)) {
+          parseFunctionCall(IdentifierExpr(name), tokens.tail)
+        } else {
+          Right((IdentifierExpr(name), tokens))
+        }
       case True => Right((BooleanLiteralExpr(true), tokens))
       case False => Right((BooleanLiteralExpr(false), tokens))
       case OpenParen =>
@@ -95,6 +100,23 @@ object Parser {
     }
   }
 
+  private def parseFunctionCall(function: Expression, tokens: List[Token]): Either[String, (Expression, List[Token])] = {
+    def parseArguments(tokens: List[Token], args: List[Expression] = Nil): Either[String, (List[Expression], List[Token])] = {
+      tokens match {
+        case CloseParen :: rest => Right((args, rest))
+        case Comma :: rest => parseArguments(rest, args)
+        case _ =>
+          parseExpression(tokens).flatMap { case (arg, rest) =>
+            parseArguments(rest, args :+ arg)
+          }
+      }
+    }
+
+    parseArguments(tokens).map { case (args, remainingTokens) =>
+      (FunctionCallExpr(function, args), remainingTokens)
+    }
+  }
+
   private def parseInfixExpression(leftExpr: Expression, tokens: List[Token], precedence: Int): Either[String, (Expression, List[Token])] = {
     var currentTokens = tokens
     var left = leftExpr
@@ -103,6 +125,11 @@ object Parser {
       currentTokens.head match {
         case Plus | Minus | Asterisk | Slash | Equal | NotEqual | LessThan | GreaterThan =>
           parseBinaryExpression(left, currentTokens).map { case (newLeft, newTokens) =>
+            left = newLeft
+            currentTokens = newTokens
+          }
+        case OpenParen =>
+          parseFunctionCall(left, currentTokens.tail).map { case (newLeft, newTokens) =>
             left = newLeft
             currentTokens = newTokens
           }
