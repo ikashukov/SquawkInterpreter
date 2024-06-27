@@ -10,11 +10,11 @@ object REPL {
   def main(args: Array[String]): Unit = {
     println("Welcome to Squawk REPL. Type your code and press Enter to parse and evaluate.")
     println("Type ':showEnv' to display the current environment.")
-    println("An empty input will exit the REPL.")
+    println("An empty input or ':exit' will exit the REPL.")
     repl()
   }
 
-  def repl(): Unit = {
+  private def repl(): Unit = {
     var continue = true
     var environment: Evaluator.Environment = Map.empty
 
