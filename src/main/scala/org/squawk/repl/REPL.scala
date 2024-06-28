@@ -41,7 +41,10 @@ object REPL {
               evalResult match {
                 case Right((value, updatedEnv)) =>
                   environment = updatedEnv
-                  println(s"Result: $value")
+                  value match {
+                    case Evaluator.VoidValue => println("Result: OK")
+                    case _ => println(s"Result: $value")
+                  }
                 case Left(error) => println(s"Evaluation error: $error")
               }
             }

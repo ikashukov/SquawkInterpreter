@@ -9,6 +9,7 @@ object Evaluator {
   case class NumberValue(value: Int) extends Value
   case class BooleanValue(value: Boolean) extends Value
   case class FunctionValue(parameters: List[String], body: BlockStmt, env: Environment) extends Value
+  case object VoidValue extends Value
 
   type Environment = Map[String, Value]
 
@@ -19,7 +20,7 @@ object Evaluator {
       case IdentifierExpr(name) =>
         env.get(name).toRight(s"Undefined variable: $name").map(value => (value, env))
       case LetStmt(identifier, value) =>
-        evaluate(value, env).map { case (v, updatedEnv) => (NumberValue(0), updatedEnv + (identifier.name -> v)) }
+        evaluate(value, env).map { case (v, updatedEnv) => (VoidValue, updatedEnv + (identifier.name -> v)) }
       case ExpressionStmt(expression) =>
         evaluate(expression, env).map { case (v, updatedEnv) => (v, updatedEnv) }
       case ReturnStmt(value) =>
@@ -36,7 +37,7 @@ object Evaluator {
         }
       case FunctionDeclarationStmt(name, parameters, body) =>
         val functionValue = FunctionValue(parameters.map(_.name), body, env)
-        Right((NumberValue(0), env + (name.name -> functionValue)))
+        Right((VoidValue, env + (name.name -> functionValue)))
       case FunctionCallExpr(function, arguments) =>
         for {
           funcValue <- evaluate(function, env).map(_._1)
@@ -85,7 +86,7 @@ object Evaluator {
           Left(s"Expected ${parameters.length} arguments but got ${argValues.length}")
         } else {
           val newEnv = funcEnv ++ parameters.zip(argValues).toMap
-          val result = body.statements.foldLeft[Either[String, Value]](Right(NumberValue(0))) {
+          val result = body.statements.foldLeft[Either[String, Value]](Right(VoidValue)) {
             case (Right(_), stmt) => evaluate(stmt, newEnv).map(_._1)
             case (left, _) => left
           }

@@ -27,7 +27,7 @@ class EvaluatorTest extends FunSuite {
   test("evaluate let statement") {
     val stmt = LetStmt(IdentifierExpr("x"), NumberLiteralExpr(10))
     val result = Evaluator.evaluate(stmt)
-    assertEquals(result, Right((Evaluator.NumberValue(0), Map("x" -> Evaluator.NumberValue(10)))))
+    assertEquals(result, Right((Evaluator.VoidValue, Map("x" -> Evaluator.NumberValue(10)))))
   }
 
   test("evaluate variable") {
@@ -64,7 +64,7 @@ class EvaluatorTest extends FunSuite {
     val result = Evaluator.evaluate(stmt)
     assert(result.isRight)
     val (value, env) = result.toOption.get
-    assertEquals(value, Evaluator.NumberValue(0))
+    assertEquals(value, Evaluator.VoidValue)
     assert(env.contains("add"))
   }
 
