@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>SquawkInterpreter Web UI</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+<div class="container">
+    <textarea id="input" rows="10" cols="50">
+let x = 3;
+let y = 7;
+fn add(a, b) {  return a + b;}
+fn mult(c, d) { return c * d; }
+mult(add(x, 2),4) - add(mult(3,y),y) + mult(x,mult(x,y)) - x - y - x;
+    </textarea>
+    <div class="buttons">
+        <button id="runButton">Run</button>
+        <button id="showEnvButton">Show Env</button>
+        <button id="clearEnvButton">Clear Env</button>
+    </div>
+    <div id="output" class="output"></div>
+</div>
 <script type="text/javascript" src="squawk-fastopt.js"></script>
 </body>
 </html>
