@@ -28,3 +28,12 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Build Scala.js project
+        run: sbt squawkJS/fastOptJS
+      - name: Copy resources
+        run: cp js/target/scala-3.4.2/classes/index.html js/target/scala-3.4.2/
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: js/target/scala-3.4.2
