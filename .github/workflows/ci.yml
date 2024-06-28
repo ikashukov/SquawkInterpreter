@@ -34,6 +34,7 @@ jobs:
         run: |
           mkdir -p gh-pages
           cp js/target/scala-3.4.2/classes/index.html gh-pages/
+          cp js/target/scala-3.4.2/classes/styles.css gh-pages/
           cp js/target/scala-3.4.2/squawk-fastopt.js gh-pages/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
