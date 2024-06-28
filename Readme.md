@@ -73,7 +73,7 @@ let x = 5;
 fn mult(a, b) {return a * b;}
 mult(x, 2);
 ```
-Примеры других программ (как синтаксически корректных, так и некорректных) содержатся в интеграционных тестах (src/test/scala/org/squawk/integration/IntegrationTest.scala).
+Примеры других программ (как синтаксически корректных, так и некорректных) содержатся в [интеграционных тестах](https://github.com/ikashukov/SquawkInterpreter/blob/master/shared/src/test/scala/org/squawk/integration/IntegrationTest.scala).
 
 ## Системные требования
 - Браузер с включенным Javascript (для работы через веб-интерфейс, рекомендуется)
