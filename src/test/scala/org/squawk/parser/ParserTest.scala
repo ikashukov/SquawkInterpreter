@@ -5,6 +5,9 @@ import org.squawk.ast._
 import org.squawk.lexer.Lexer
 import org.squawk.tokens._
 
+/*
+ * Positive test cases for the Squawk parser. 
+ */
 class ParserTest extends FunSuite {
 
   test("'let' statement parsing test") {

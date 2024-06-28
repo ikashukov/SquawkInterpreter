@@ -37,15 +37,26 @@ class IntegrationTest extends FunSuite {
     assertEquals(result, Right(Evaluator.NumberValue(42)))
   }
 
+  test("evaluate arithmetic comparison") {
+    val program =
+      """
+      let x = 4*3;
+      let y = 5*2;
+      x > y;
+    """
+    val result = evaluateProgram(program)
+    assertEquals(result, Right(Evaluator.BooleanValue(true)))
+  }
+
   test("evaluate simple function call") {
     val program = """
       fn add(a, b) {
         return a + b;
       }
-      add(3, 4);
+      add(3, 4) == 7;
     """
     val result = evaluateProgram(program)
-    assertEquals(result, Right(Evaluator.NumberValue(7)))
+    assertEquals(result, Right(Evaluator.BooleanValue(true)))
   }
 
   test("evaluate nested function calls") {
