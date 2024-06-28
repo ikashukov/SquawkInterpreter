@@ -12,6 +12,18 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.welcome {
+    margin-bottom: 20px;
+}
+
+.welcome h1 {
+    margin-top: 0;
+}
+
+.welcome p {
+    font-size: 14px;
+}
+
 textarea {
     width: 100%;
     padding: 10px;
