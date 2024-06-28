@@ -1,6 +1,7 @@
 # Squawk!
 
 ![CI](https://github.com/ikashukov/SquawkInterpreter/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/ikashukov/SquawkInterpreter/branch/master/graph/badge.svg)](https://codecov.io/gh/ikashukov/SquawkInterpreter)
 
 ## Что это?
 
