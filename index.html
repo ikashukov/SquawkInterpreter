@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SquawkInterpreter Web UI</title>
+    <title>Интерпретатор Squawk</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 <div class="container">
+    <div class="welcome">
+        <h1>Интерпретатор Squawk</h1>
+        <p>Введите код на языке Squawk в поле ниже и нажмите 'Запустить', чтобы запустить его. Кнопки 'Содержимое среды' и 'Очистить среду' позволяют просмотреть и очистить содержимое среды (значения переменных и определения функций). Более подробная информация содержится в <a href="https://github.com/ikashukov/SquawkInterpreter" target="_blank">GitHub-репозитории проекта Squawk</a>.</p>
+    </div>
     <textarea id="input" rows="10" cols="50">
 let x = 3;
 let y = 7;
 fn add(a, b) {  return a + b;}
 fn mult(c, d) { return c * d; }
-mult(add(x, 2),4) - add(mult(3,y),y) + mult(x,mult(x,y)) - x - y - x;
-    </textarea>
+mult(add(x, 2),4) - add(mult(3,y),y) + mult(x,mult(x,y)) - x - y - x;</textarea>
     <div class="buttons">
-        <button id="runButton">Run</button>
-        <button id="showEnvButton">Show Env</button>
-        <button id="clearEnvButton">Clear Env</button>
+        <button id="runButton">Запустить</button>
+        <button id="showEnvButton">Содержимое среды</button>
+        <button id="clearEnvButton">Очистить среду</button>
     </div>
     <div id="output" class="output"></div>
 </div>
