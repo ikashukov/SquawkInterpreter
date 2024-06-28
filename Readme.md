@@ -1,5 +1,7 @@
 # Squawk!
 
+![CI](https://github.com/ikashukov/SquawkInterpreter/actions/workflows/ci.yml/badge.svg)
+
 ## Что это?
 
 Интерпретатор простого языка программирования под названием Squawk.
