@@ -34,10 +34,16 @@ class REPLTest extends FunSuite {
     assert(output.contains("Result: NumberValue(33)"))
   }
 
-  test("incorrect syntax in input") {
+  test("incorrect syntax in input - evaluation error") {
     val input = "fn add(a,b) {return a+b;}\nadd(2);\n:exit\n"
     val output = runReplWithInput(input)
     assert(output.contains("Evaluation error: Expected 2 arguments but got 1"))
+  }
+
+  test("incorrect syntax in input - parsing error") {
+    val input = "a = 3;\n:exit\n"
+    val output = runReplWithInput(input)
+    assert(output.contains("Parsing error: Expected ';' after expression near: Assign Number(3) Semicolon"))
   }
 
   test(":showEnv command") {
