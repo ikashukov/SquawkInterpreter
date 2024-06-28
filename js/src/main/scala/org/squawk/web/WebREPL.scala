@@ -2,9 +2,9 @@ package org.squawk.web
 
 import org.scalajs.dom
 import org.scalajs.dom.document
+import org.squawk.evaluator.Evaluator
 import org.squawk.lexer.Lexer
 import org.squawk.parser.Parser
-import org.squawk.evaluator.Evaluator
 
 object WebREPL {
   def main(args: Array[String]): Unit = {

@@ -110,7 +110,7 @@ cd SquawkInterpreter
 ```
 - Запустите консоль REPL:
 ```shell
-sbt run
+sbt squawkJVM/run
 ```
 
 ## Как пользоваться консолью интерпретатора (REPL)

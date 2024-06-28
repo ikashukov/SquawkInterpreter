@@ -1,9 +1,10 @@
 package org.squawk
 package repl
 
-import lexer.Lexer
-import parser.Parser
-import evaluator.Evaluator
+import org.squawk.evaluator.Evaluator
+import org.squawk.lexer.Lexer
+import org.squawk.parser.Parser
+
 import scala.io.StdIn.readLine
 
 object REPL {
