@@ -7,28 +7,29 @@ import org.squawk.lexer.Lexer
 import org.squawk.parser.Parser
 
 object WebREPL {
+  private var environment: Evaluator.Environment = Map.empty
+
   def main(args: Array[String]): Unit = {
     setupUI()
   }
 
   private def setupUI(): Unit = {
-    val inputArea = document.createElement("textarea")
-    inputArea.setAttribute("id", "input")
-    inputArea.setAttribute("rows", "10")
-    inputArea.setAttribute("cols", "50")
+    val inputArea = document.getElementById("input").asInstanceOf[dom.html.TextArea]
 
-    val runButton = document.createElement("button")
-    runButton.textContent = "Run"
+    val runButton = document.getElementById("runButton").asInstanceOf[dom.html.Button]
     runButton.addEventListener("click", { (_: dom.MouseEvent) =>
-      runCode(inputArea.asInstanceOf[dom.html.TextArea].value)
+      runCode(inputArea.value)
     })
 
-    val outputArea = document.createElement("div")
-    outputArea.setAttribute("id", "output")
+    val showEnvButton = document.getElementById("showEnvButton").asInstanceOf[dom.html.Button]
+    showEnvButton.addEventListener("click", { (_: dom.MouseEvent) =>
+      showEnv()
+    })
 
-    document.body.appendChild(inputArea)
-    document.body.appendChild(runButton)
-    document.body.appendChild(outputArea)
+    val clearEnvButton = document.getElementById("clearEnvButton").asInstanceOf[dom.html.Button]
+    clearEnvButton.addEventListener("click", { (_: dom.MouseEvent) =>
+      clearEnv()
+    })
   }
 
   private def runCode(input: String): Unit = {
@@ -37,7 +38,6 @@ object WebREPL {
 
     parseResult match {
       case Right(program) =>
-        var environment: Evaluator.Environment = Map.empty
         val output = program.statements.map { stmt =>
           val evalResult = Evaluator.evaluate(stmt, environment)
           evalResult match {
@@ -56,5 +56,15 @@ object WebREPL {
       case Left(error) =>
         document.getElementById("output").textContent = s"Parsing error: $error"
     }
+  }
+
+  private def showEnv(): Unit = {
+    val envOutput = environment.map { case (name, value) => s"$name = $value" }.mkString("\n")
+    document.getElementById("output").textContent = envOutput
+  }
+
+  private def clearEnv(): Unit = {
+    environment = Map.empty
+    document.getElementById("output").textContent = "Environment cleared"
   }
 }
