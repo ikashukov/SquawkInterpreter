@@ -37,8 +37,20 @@ class REPLTest extends FunSuite {
   test("incorrect syntax in input") {
     val input = "fn add(a,b) {return a+b;}\nadd(2);\n:exit\n"
     val output = runReplWithInput(input)
-    println(output)
     assert(output.contains("Evaluation error: Expected 2 arguments but got 1"))
+  }
+
+  test(":showEnv command") {
+    val input = "let a = 2;\nfn get(x) {return x;}\n:showEnv\n:exit\n"
+    val output = runReplWithInput(input)
+    assert(output.contains("a = NumberValue(2)"))
+    assert(output.contains("get = FunctionValue(List(x),BlockStmt(List(ReturnStmt(IdentifierExpr(x)))),Map(a -> NumberValue(2)))"))
+  }
+
+  test("an unknown command") {
+    val input = ":nosuchcommand\n:exit\n"
+    val output = runReplWithInput(input)
+    assert(output.contains("Unknown command: :nosuchcommand"))
   }
 
 }
