@@ -96,6 +96,10 @@ object Parser {
             case _ => Left(s"Expected ')' after expression near: ${showNearbyTokens(afterExpr)}")
           }
         }
+      case Minus =>
+        parseExpression(tokens).map { case (expr, remainingTokens) =>
+          (UnaryExpr(Minus, expr), remainingTokens)
+        }
       case _ => Left(s"Unsupported expression near: ${showNearbyTokens(tokens)}")
     }
   }

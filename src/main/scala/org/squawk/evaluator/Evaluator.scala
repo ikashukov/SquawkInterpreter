@@ -30,6 +30,10 @@ object Evaluator {
           rightValue <- evaluate(right, env).map(_._1)
           result <- evalBinaryExpr(operator, leftValue, rightValue)
         } yield (result, env)
+      case UnaryExpr(operator, operand) =>
+        evaluate(operand, env).flatMap { case (value, updatedEnv) =>
+          evalUnaryExpr(operator, value).map(result => (result, updatedEnv))
+        }
       case FunctionDeclarationStmt(name, parameters, body) =>
         val functionValue = FunctionValue(parameters.map(_.name), body, env)
         Right((NumberValue(0), env + (name.name -> functionValue)))
@@ -55,6 +59,13 @@ object Evaluator {
       case (LessThan, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l < r))
       case (GreaterThan, NumberValue(l), NumberValue(r)) => Right(BooleanValue(l > r))
       case _ => Left(s"Unsupported binary operation: $operator $left $right")
+    }
+  }
+
+  private def evalUnaryExpr(operator: Token, value: Value): Either[String, Value] = {
+    (operator, value) match {
+      case (Minus, NumberValue(v)) => Right(NumberValue(-v))
+      case _ => Left(s"Unsupported unary operation: $operator $value")
     }
   }
 

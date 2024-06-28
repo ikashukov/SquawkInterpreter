@@ -43,6 +43,12 @@ class EvaluatorTest extends FunSuite {
     assertEquals(result, Right((Evaluator.NumberValue(15), Map.empty)))
   }
 
+  test("evaluate expression with unary minus") {
+    val expr = BinaryExpr(Minus, UnaryExpr(Minus, NumberLiteralExpr(2)), UnaryExpr(Minus, NumberLiteralExpr(5)))
+    val result = Evaluator.evaluate(expr)
+    assertEquals(result, Right((Evaluator.NumberValue(3), Map.empty)))
+  }
+
   test("evaluate division by zero") {
     val expr = BinaryExpr(Slash, NumberLiteralExpr(10), NumberLiteralExpr(0))
     val result = Evaluator.evaluate(expr)

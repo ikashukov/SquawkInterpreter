@@ -40,6 +40,25 @@ class ParserTest extends FunSuite {
     }
   }
 
+  test("unary minus parsing test") {
+    val tokens = Lexer.tokenize("(-2 - -3) * -4;")
+    val parsedProgram = Parser.parse(tokens)
+    val expectedProgram = Program(List(ExpressionStmt(
+      BinaryExpr(
+        Asterisk,
+        UnaryExpr(
+          Minus,
+          BinaryExpr(Minus,NumberLiteralExpr(2),
+          UnaryExpr(Minus,NumberLiteralExpr(3)))),
+        UnaryExpr(Minus,NumberLiteralExpr(4)))
+    )))
+
+    parsedProgram match {
+      case Right(program) => assertEquals(program, expectedProgram)
+      case Left(error) => fail(s"Parsing failed with error: $error")
+    }
+  }
+
   test("'return' statement parsing test with an identifier") {
     val tokens = Lexer.tokenize("return abcd;")
     val parsedProgram = Parser.parse(tokens)

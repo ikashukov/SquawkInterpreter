@@ -8,6 +8,7 @@ import scala.io.StdIn.readLine
 
 object REPL {
   def main(args: Array[String]): Unit = {
+    println()
     println("Welcome to Squawk REPL. Type your code and press Enter to parse and evaluate.")
     println("Type ':showEnv' to display the current environment.")
     println("An empty input or ':exit' will exit the REPL.")
