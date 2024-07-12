@@ -15,9 +15,12 @@ jobs:
       contents: write
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v2
-      - name: Install sbt
-        uses: olafurpg/setup-scala@v14
+        uses: actions/checkout@v4
+      - name: Setup JDK with Scala and SBT
+        uses: actions/setup-java@v4.2.1
+        with:
+          distribution: temurin
+          java-version: 11
       - name: Run tests with coverage
         run: sbt clean coverage squawkJVM/test coverageReport
       - name: Upload coverage reports to Codecov
