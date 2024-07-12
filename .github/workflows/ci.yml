@@ -30,6 +30,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build Scala.js project
         run: sbt squawkJS/fastOptJS
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
       - name: Copy resources
         run: |
           mkdir -p gh-pages
