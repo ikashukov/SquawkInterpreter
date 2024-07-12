@@ -9,9 +9,9 @@
 <div class="container">
     <div class="welcome">
         <h1>Интерпретатор Squawk</h1>
-        <p>Введите код на языке Squawk в поле ниже и нажмите 'Запустить', чтобы запустить его. Кнопки 'Содержимое среды' и 'Очистить среду' позволяют просмотреть и очистить содержимое среды (значения переменных и определения функций). Более подробная информация, в том числе примеры кода, доступна в <a href="https://github.com/ikashukov/SquawkInterpreter" target="_blank">GitHub-репозитории проекта Squawk</a>.</p>
+        <p>Введите код на языке Squawk в поле ниже и нажмите 'Запустить', чтобы запустить его. Кнопки 'Содержимое среды' и 'Очистить среду' позволяют просмотреть и очистить содержимое среды (значения переменных и определения функций). Более подробная информация, в том числе примеры кода, содержится в <a href="https://github.com/ikashukov/SquawkInterpreter" target="_blank">GitHub-репозитории проекта Squawk</a>.</p>
     </div>
-    <label for="input"></label><textarea id="input" rows="10" cols="50">
+    <textarea id="input" rows="10" cols="50">
 let x = 3;
 let y = 7;
 fn add(a, b) {  return a + b;}
@@ -27,4 +27,3 @@ mult(add(x, 2),4) - add(mult(3,y),y) + mult(x,mult(x,y)) - x - y - x;</textarea>
 <script type="text/javascript" src="squawk-fastopt.js"></script>
 </body>
 </html>
-
