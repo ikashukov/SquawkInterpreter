@@ -29,10 +29,11 @@ jobs:
       - name: Copy resources
         run: |
           mkdir -p gh-pages
-          cp js/target/scala-3.4.2/classes/index.html gh-pages/
-          cp js/target/scala-3.4.2/classes/styles.css gh-pages/
-          cp js/target/scala-3.4.2/squawk-fastopt.js gh-pages/
+          mv js/target/scala-3.4.2/classes/index.html gh-pages/
+          mv js/target/scala-3.4.2/classes/styles.css gh-pages/
+          mv js/target/scala-3.4.2/squawk-fastopt.js gh-pages/
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
