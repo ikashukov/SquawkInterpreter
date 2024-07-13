@@ -29,12 +29,19 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build Scala.js project
         run: sbt squawkJS/fastOptJS
-      - name: Copy resources
+      - name: Move resources
         run: |
           mkdir -p gh-pages
-          mv js/target/scala-3.4.2/classes/index.html gh-pages/
-          mv js/target/scala-3.4.2/classes/styles.css gh-pages/
-          mv js/target/scala-3.4.2/squawk-fastopt.js gh-pages/
+          files=("classes/index.html" "classes/styles.css" "squawk-fastopt.js")
+          for file in "${files[@]}"; do
+            src="js/target/scala-3.4.2/$file"
+            if [ -f "$src" ]; then
+              mv "$src" gh-pages/
+            else
+              echo "$src not found"
+                exit 1
+            fi
+          done
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
