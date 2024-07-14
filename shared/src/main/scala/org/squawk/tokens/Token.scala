@@ -26,7 +26,7 @@ case object Let extends Token             // let
 case object Function extends Token        // fn
 
 case object If extends Token              // if
-case object Else extends Token            // if
+case object Else extends Token            // else
 case object Return extends Token          // return
 case object True extends Token            // true
 case object False extends Token           // false
